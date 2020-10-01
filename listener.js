@@ -192,14 +192,14 @@ async function main() {
 			sigsWithDeadlines.push(await extracFromRedemptionSig(w.args));
 		}
 
-		for (let sig of sigsWithDeadlines) {
-			console.log(`${sig.dAddr} adding listener for #${ sig.blockTarget.toString() }`);
-			addTarget(blockTargets, sig.blockTarget.toString(), sig)
+		for (let i in sigsWithDeadlines) {
+			const target = ethers.BigNumber.from(waiting[i].blockNumber).add(fourHours).toString();
+			console.log(`${sigsWithDeadlines[i].dAddr} adding listener for #${ target }`);
+			addTarget(blockTargets, target, sigsWithDeadlines[i])
 		}
 
 		console.log(`Listening for GotRedemptionSignature`)
 		tbtcSysContract.on(tbtcSysContract.filters.GotRedemptionSignature(), async (...ev) => {
-			console.log(ev);
 			let sig = await extracFromRedemptionSig(ev);
 			console.log(`${sig.dAddr} adding listener for #${ sig.blockTarget.toString() }`);
 			addTarget(blockTargets, sig.blockTarget.toString(), sig)
